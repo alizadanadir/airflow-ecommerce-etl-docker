@@ -9,6 +9,7 @@ from airflow.operators.python import PythonOperator
 from airflow.hooks.http_hook import HttpHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.utils.task_group import TaskGroup
 
 headers = {
     'X-Nickname': "aa-tolmachev",
@@ -172,4 +173,37 @@ upload_user_activity_log_to_db = PythonOperator(
     }
 )
 
-get_task >> get_report >> get_increment >> [upload_user_order_log_to_db, upload_customer_research_to_db, upload_user_activity_log_to_db]
+with TaskGroup("update_d_tables", dag = dag) as d_tables:
+    update_d_city_table = PostgresOperator(
+        task_id='update_d_city',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/d_city.sql")
+
+    update_d_customer_table = PostgresOperator(
+        task_id='update_d_customer',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/d_customer.sql")
+
+    update_d_item_table = PostgresOperator(
+        task_id='update_d_item',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/d_item.sql")
+    
+
+with TaskGroup("update_f_tables", dag = dag) as f_tables:
+    update_f_research_table = PostgresOperator(
+        task_id='update_f_research',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/f_research.sql")
+
+    update_f_daily_activity_table = PostgresOperator(
+        task_id='update_f_daily_activity',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/f_daily_activity.sql")
+
+    update_f_daily_sales_table = PostgresOperator(
+        task_id='update_f_daily_sales',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/f_daily_sales.sql")
+
+get_task >> get_report >> get_increment >> [upload_user_order_log_to_db, upload_customer_research_to_db, upload_user_activity_log_to_db] >> d_tables >> f_tables
