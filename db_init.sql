@@ -98,3 +98,15 @@ CREATE TABLE warehouse.f_daily_activity (
 	customer_id int4 NULL,
 	quantity int8 NULL
 );
+
+-- datamart table
+
+CREATE TABLE warehouse.customer_retention (
+	week_startday timestamp NULL,
+	item_id int4 NULL,
+	new_customers_count int8 NULL,
+	new_customers_revenue numeric NULL,
+	returning_customers_count int8 NULL,
+	returning_customers_revenue numeric NULL,
+	refunding_customers_count int8 NULL
+);
