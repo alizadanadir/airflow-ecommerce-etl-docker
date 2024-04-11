@@ -205,5 +205,13 @@ with TaskGroup("update_f_tables", dag = dag) as f_tables:
         task_id='update_f_daily_sales',
         postgres_conn_id=postgres_conn_id,
         sql="sql/f_daily_sales.sql")
+    
+    update_customer_retention_datamart = PostgresOperator(
+        task_id='update_customer_retention',
+        postgres_conn_id=postgres_conn_id,
+        sql="sql/customer_retention.sql")
+    
 
-get_task >> get_report >> get_increment >> [upload_user_order_log_to_db, upload_customer_research_to_db, upload_user_activity_log_to_db] >> d_tables >> f_tables
+
+get_task >> get_report >> get_increment >> [upload_user_order_log_to_db, upload_customer_research_to_db, upload_user_activity_log_to_db] \
+    >> d_tables >> f_tables
