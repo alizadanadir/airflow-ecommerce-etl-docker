@@ -1,22 +1,22 @@
 ##  About the project
 
-This project simulates the daily data loading process from various sources into a data warehouse to support data analysis tasks. The data flow involves connecting to data sources via **APIs**, retrieving the necessary data, and loading it into a staging schema within a **PostgreSQL** database. Once all data is loaded into the database, transformations are performed to create datamarts including the **customer retention** datamart. This datamart enables the analysis of customer retention rates across different product categories, _helping to identify the categories with the best customer retention_.
+This project simulates the daily data loading process from various sources into a data warehouse to support data analysis tasks. The data flow involves connecting to data sources via `APIs`, retrieving the necessary data, and loading it into a staging schema within a `PostgreSQL` database. Once all data is loaded into the database, transformations are performed to create datamarts including the **customer retention** datamart. This datamart enables the analysis of customer retention rates across different product categories, _helping to identify the categories with the best customer retention_.
 
 ##  Key Technologies
 
-* **PostgreSQL:** The project utilizes a PostgreSQL database for storing the staging data and datamarts.
-* **Apache Airflow:** Airflow orchestrates the data pipeline, handling the scheduling and execution of data retrieval, transformation, and loading tasks.
-* **Docker:** The project is set up to run within Docker containers for easier management, deployment, and scalability.
+* `PostgreSQL:` The project utilizes a PostgreSQL database for storing the staging data and datamarts.
+* `Apache Airflow:` Airflow orchestrates the data pipeline, handling the scheduling and execution of data retrieval, transformation, and loading tasks.
+* `Docker:` The project is set up to run within Docker containers for easier management, deployment, and scalability.
 
 ## Project Structure
 
 The project is organized as follows:
 
-* __.env:__ Airflow configuration file for setting up the environment.
-* __docker-compose.yaml:__ Docker configuration file and resources for setting up the environment.
-* __db_init.sql:__ Contains codes to initialize and  create the database objects.
-* __/dags:__ Contains Apache Airflow DAG for orchestrating the data pipeline.
-* __/dags/sql:__ Contains the source code for data retrieval, transformation, and loading tasks.
+* `.env:` Airflow configuration file for setting up the environment.
+* `docker-compose.yaml:` Docker configuration file and resources for setting up the environment.
+* `db_init.sql:` Contains codes to initialize and  create the database objects.
+* `/dags:` Contains Apache Airflow DAG for orchestrating the data pipeline.
+* `/dags/sql:` Contains the source code for data retrieval, transformation, and loading tasks.
 
 ##   Setting up environment
 
@@ -37,19 +37,18 @@ docker ps
 and create the database:
 
 ```bash
-docker exec -it [postgresql container_id] createdb -U airflow airflow
+docker exec -it [postgresql container id] createdb -U airflow airflow
 ```
 3. Start all the services defined in the **docker-compose.yaml** file and keep them running. This includes running the PostgreSQL database, the Apache Airflow scheduler, webserver, worker, and flower.
 ```bash
 docker-compose up -d
 ```
 
-4. To create all the database objects run following command modifying **-c** parameter values to the required SQL command:
+4. To create all the database objects run following command modifying `-c` parameter values to the required SQL command:
 
 ```bash
-docker exec -t [postgresql container_id] psql -U airflow -c "CREATE SCHEMA staging;"
+docker exec -t [postgresql container id] psql -U airflow -c "CREATE SCHEMA staging;"
 ```
-
 
 #### Creating API and database connection in Airflow:
 
@@ -73,5 +72,5 @@ and run following command:
 nc -vz postgres 5432
 ```
 
-That's it. Now, can connect to the Airflow webserver and see the dag running.
+That's it. Now, can connect to the Airflow webserver at `localhost:8080` and see the dag running.
 
