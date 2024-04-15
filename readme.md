@@ -15,8 +15,9 @@ The project is organized as follows:
 * `.env:` Airflow configuration file for setting up the environment.
 * `docker-compose.yaml:` Docker configuration file and resources for setting up the environment.
 * `db_init.sql:` Contains codes to initialize and  create the database objects.
-* `/dags:` Contains Apache Airflow DAG for orchestrating the data pipeline.
-* `/dags/sql:` Contains the source code for data retrieval, transformation, and loading tasks.
+* `./dags:` Contains Apache Airflow DAG for orchestrating the data pipeline.
+* `./dags/sql:` Contains the source code for data retrieval, transformation, and loading tasks.
+* `./dags/data_quality_checks:` Contains code to the check data quality of data uploaded to the staging tables
 
 ##   Setting up environment
 
