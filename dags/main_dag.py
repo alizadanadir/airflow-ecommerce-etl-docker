@@ -10,6 +10,8 @@ from airflow.hooks.http_hook import HttpHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.task_group import TaskGroup
+from airflow.operators.sql import SQLCheckOperator
+
 
 headers = {
     'X-Nickname': "aa-tolmachev",
@@ -173,6 +175,18 @@ upload_user_activity_log_to_db = PythonOperator(
     }
 )
 
+with TaskGroup("data_quality_checks", dag= dag) as data_quality_checks:
+    user_order_log_isNull_check = SQLCheckOperator(
+    task_id="user_order_log_isNull_check", 
+    sql="data_quality_checks/user_order_log_isNull_check.sql",
+    conn_id = postgres_conn_id
+)
+    user_activity_log_isNull_check = SQLCheckOperator(
+    task_id="user_activity_log_isNull_check", 
+    sql="data_quality_checks/user_activity_log_isNull_check.sql",
+    conn_id = postgres_conn_id
+)
+
 with TaskGroup("update_d_tables", dag = dag) as d_tables:
     update_d_city_table = PostgresOperator(
         task_id='update_d_city',
@@ -214,4 +228,4 @@ with TaskGroup("update_f_tables", dag = dag) as f_tables:
 
 
 get_task >> get_report >> get_increment >> [upload_user_order_log_to_db, upload_customer_research_to_db, upload_user_activity_log_to_db] \
-    >> d_tables >> f_tables
+    >> data_quality_checks >> d_tables >> f_tables
