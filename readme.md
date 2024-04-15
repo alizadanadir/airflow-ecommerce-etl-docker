@@ -17,7 +17,7 @@ The project is organized as follows:
 * `db_init.sql:` Contains codes to initialize and  create the database objects.
 * `./dags:` Contains Apache Airflow DAG for orchestrating the data pipeline.
 * `./dags/sql:` Contains the source code for data retrieval, transformation, and loading tasks.
-* `./dags/data_quality_checks:` Contains code to the check data quality of data uploaded to the staging tables
+* `./dags/data_quality_checks:` Contains code to check the data quality of data uploaded to the staging tables
 
 ##   Setting up environment
 
