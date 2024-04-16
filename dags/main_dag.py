@@ -29,6 +29,7 @@ base_url = http_conn_id.host
 
 postgres_conn_id = 'postgresql_de'
 
+
 def get_task(ti):
     print('Making request to get task_id')
 
@@ -102,6 +103,46 @@ def upload_csv_to_db(ti, date, filename, db_schema, db_table, date_column):
     row_count = df.to_sql(db_table, engine, schema=db_schema, if_exists='append', index=False)
     print(f'{row_count} rows was inserted')
 
+def user_activity_log_success(context):
+    ti = context['ti']
+    execution_date = ti.execution_date
+
+    postgres_hook = PostgresHook(postgres_conn_id)
+    engine = postgres_hook.get_sqlalchemy_engine()
+
+    insert_query = f"insert into staging.dq_checks_results values('user_activity_log', 'isNull', '{execution_date}', 1)"
+    engine.execute(insert_query)
+
+def user_activity_log_failure(context):
+    ti = context['ti']
+    execution_date = ti.execution_date
+
+    postgres_hook = PostgresHook(postgres_conn_id)
+    engine = postgres_hook.get_sqlalchemy_engine()
+
+    insert_query = f"insert into staging.dq_checks_results values('user_activity_log', 'isNull', '{execution_date}', 0)"
+    engine.execute(insert_query)
+
+def user_order_log_success(context):
+    ti = context['ti']
+    execution_date = ti.execution_date
+
+    postgres_hook = PostgresHook(postgres_conn_id)
+    engine = postgres_hook.get_sqlalchemy_engine()
+
+    insert_query = f"insert into staging.dq_checks_results values('user_order_log', 'isNull', '{execution_date}', 1)"
+    engine.execute(insert_query)
+
+
+def user_order_log_failure(context):
+    ti = context['ti']
+    execution_date = ti.execution_date
+
+    postgres_hook = PostgresHook(postgres_conn_id)
+    engine = postgres_hook.get_sqlalchemy_engine()
+
+    insert_query = f"insert into staging.dq_checks_results values('user_order_log', 'isNull', '{execution_date}', 0)"
+    engine.execute(insert_query)
 
 args = {
     "owner": "nalizada",
@@ -179,12 +220,16 @@ with TaskGroup("data_quality_checks", dag= dag) as data_quality_checks:
     user_order_log_isNull_check = SQLCheckOperator(
     task_id="user_order_log_isNull_check", 
     sql="data_quality_checks/user_order_log_isNull_check.sql",
-    conn_id = postgres_conn_id
+    conn_id = postgres_conn_id,
+    on_success_callback = user_order_log_success,
+    on_failure_callback = user_order_log_failure
 )
     user_activity_log_isNull_check = SQLCheckOperator(
     task_id="user_activity_log_isNull_check", 
     sql="data_quality_checks/user_activity_log_isNull_check.sql",
-    conn_id = postgres_conn_id
+    conn_id = postgres_conn_id,
+    on_success_callback = user_activity_log_success,
+    on_failure_callback = user_activity_log_failure
 )
 
 with TaskGroup("update_d_tables", dag = dag) as d_tables:
