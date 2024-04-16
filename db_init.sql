@@ -110,3 +110,10 @@ CREATE TABLE warehouse.customer_retention (
 	returning_customers_revenue numeric NULL,
 	refunding_customers_count int8 NULL
 );
+
+CREATE TABLE staging.dq_checks_results (
+    Table_name VARCHAR(255),
+    DQ_check_name VARCHAR(255),
+    Datetime TIMESTAMP,
+    DQ_check_result NUMERIC(8,2) CHECK (DQ_check_result IN (0, 1))
+);
