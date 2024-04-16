@@ -12,6 +12,8 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.task_group import TaskGroup
 from airflow.operators.sql import SQLCheckOperator
 
+from callbacks.data_quality_callbacks import user_activity_log_success, user_activity_log_failure, user_order_log_success, user_order_log_failure
+
 
 headers = {
     'X-Nickname': "aa-tolmachev",
@@ -102,47 +104,6 @@ def upload_csv_to_db(ti, date, filename, db_schema, db_table, date_column):
 
     row_count = df.to_sql(db_table, engine, schema=db_schema, if_exists='append', index=False)
     print(f'{row_count} rows was inserted')
-
-def user_activity_log_success(context):
-    ti = context['ti']
-    execution_date = ti.execution_date
-
-    postgres_hook = PostgresHook(postgres_conn_id)
-    engine = postgres_hook.get_sqlalchemy_engine()
-
-    insert_query = f"insert into staging.dq_checks_results values('user_activity_log', 'isNull', '{execution_date}', 1)"
-    engine.execute(insert_query)
-
-def user_activity_log_failure(context):
-    ti = context['ti']
-    execution_date = ti.execution_date
-
-    postgres_hook = PostgresHook(postgres_conn_id)
-    engine = postgres_hook.get_sqlalchemy_engine()
-
-    insert_query = f"insert into staging.dq_checks_results values('user_activity_log', 'isNull', '{execution_date}', 0)"
-    engine.execute(insert_query)
-
-def user_order_log_success(context):
-    ti = context['ti']
-    execution_date = ti.execution_date
-
-    postgres_hook = PostgresHook(postgres_conn_id)
-    engine = postgres_hook.get_sqlalchemy_engine()
-
-    insert_query = f"insert into staging.dq_checks_results values('user_order_log', 'isNull', '{execution_date}', 1)"
-    engine.execute(insert_query)
-
-
-def user_order_log_failure(context):
-    ti = context['ti']
-    execution_date = ti.execution_date
-
-    postgres_hook = PostgresHook(postgres_conn_id)
-    engine = postgres_hook.get_sqlalchemy_engine()
-
-    insert_query = f"insert into staging.dq_checks_results values('user_order_log', 'isNull', '{execution_date}', 0)"
-    engine.execute(insert_query)
 
 args = {
     "owner": "nalizada",
