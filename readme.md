@@ -18,6 +18,7 @@ The project is organized as follows:
 * `./dags:` Contains Apache Airflow DAG for orchestrating the data pipeline.
 * `./dags/sql:` Contains the source code for data retrieval, transformation, and loading tasks.
 * `./dags/data_quality_checks:` Contains code to check the data quality of data uploaded to the staging tables
+* `./dags/callbacks:` Contains code for callback functions
 
 ##   Setting up environment
 

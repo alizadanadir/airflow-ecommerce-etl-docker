@@ -6,7 +6,7 @@ CREATE TABLE staging.user_order_log (
 	date_time timestamp NOT NULL,
 	city_id int4 NOT NULL,
 	city_name varchar(100) NULL,
-	customer_id int4 NOT NULL,
+	customer_id int4 ,
 	first_name varchar(100) NULL,
 	last_name varchar(100) NULL,
 	item_id int4 NOT NULL,
